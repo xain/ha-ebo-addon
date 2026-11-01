@@ -38,6 +38,8 @@ fi
 export EBO_BRIDGE_BIN=ebo_bridge-arm64
 export EBO_DIR="$DEST"
 export EBO_PORT="${EBO_PORT:-8000}"
+# LAN panel/API on the HA host (RTSP/WebRTC already bind 0.0.0.0 via mediamtx).
+export EBO_BIND="${EBO_BIND:-0.0.0.0}"
 
 echo "[addon] arch=$(dpkg --print-architecture) qemu=${EBO_QEMU:-native}"
 echo "[addon] libs: $(ls -1 "$DEST/lib" | tr '\n' ' ')"
