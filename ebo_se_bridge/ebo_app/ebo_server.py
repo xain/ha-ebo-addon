@@ -330,10 +330,12 @@ class Bridge:
         # MediaMTX permits anonymous publishing only from loopback. Keep reader
         # credentials out of ffmpeg's process arguments and /proc command line.
         url = f"rtsp://127.0.0.1:8554/{RTSP_PATH}"
+        # Some EBO SE firmwares emit H.264 (frameinfo id 78) instead of H.265 (80).
+        fmt = getattr(self, "_ff_fmt", None) or "hevc"
         cmd = ["ffmpeg", "-hide_banner", "-loglevel", "warning",
                "-fflags", "nobuffer", "-flags", "low_delay",
                "-analyzeduration", "500000", "-probesize", "1000000",
-               "-thread_queue_size", "256", "-f", "hevc", "-i", "pipe:0"]
+               "-thread_queue_size", "256", "-f", fmt, "-i", "pipe:0"]
         pass_fds = ()
         if AUDIO_ON:
             # second input: raw G.711 from the robot, passed through as PCMU/PCMA (no transcode).
@@ -493,6 +495,12 @@ class Bridge:
             # ffmpeg must start at a keyframe: skip frames until one carries the
             # parameter sets (HEVC VPS/SPS, H.264 SPS), otherwise it can't determine
             # the stream dimensions and exits ("dimensions not set").
+            want_fmt = "h264" if codec == 78 else "hevc"
+            if getattr(self, "_ff_fmt", None) != want_fmt:
+                self._ff_fmt = want_fmt
+                self._ff_primed = False
+                self._restart_ffmpeg()
+                continue
             if not self._ff_primed:
                 if not _has_param_set(data, codec):
                     continue
