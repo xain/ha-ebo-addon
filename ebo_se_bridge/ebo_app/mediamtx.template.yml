@@ -1,0 +1,28 @@
+# mediamtx config template. run.sh substitutes __STREAM_USER__ / __STREAM_PASS__ at startup.
+# Serves the robot video as RTSP (:8554), WebRTC (:8889) and HLS (:8888), all behind auth.
+logLevel: error
+hlsVariant: lowLatency
+hlsAlwaysRemux: yes
+
+# The local ffmpeg publisher is anonymous only from loopback, so its credentials never
+# appear in process arguments. Remote readers still require the generated account.
+authInternalUsers:
+  - user: any
+    pass:
+    ips: ["127.0.0.1", "::1"]
+    permissions:
+      - action: publish
+        path: ebo
+      - action: publish
+        path: ebo_audio
+  - user: __STREAM_USER__
+    pass: __STREAM_PASS__
+    permissions:
+      - action: read
+      - action: playback
+
+paths:
+  ebo:
+    source: publisher
+  ebo_audio:
+    source: publisher

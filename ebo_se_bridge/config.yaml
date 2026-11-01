@@ -1,0 +1,42 @@
+name: "EBO SE Bridge (local TUTK)"
+version: "0.1.0"
+slug: "ebo_se_bridge"
+description: "Local, cloud-free bridge for the Enabot EBO SE: RTSP/H.265 video + MQTT control. Needs runtime blobs in /config/ebo-se/runtime."
+url: "https://github.com/lilium360/ebo-se-lan-bridge"
+arch:
+  - amd64
+  - aarch64
+host_network: true
+init: false
+startup: application
+boot: auto
+map:
+  - config:ro
+options:
+  license_key: ""
+  uid: ""
+  authkey: ""
+  av_identity: ""
+  av_token: ""
+  stream_user: "ebo"
+  stream_pass: "change-me-rtsp"
+  web_user: ""
+  web_pass: ""
+  mqtt_host: "core-mosquitto"
+  mqtt_port: 1883
+  mqtt_user: ""
+  mqtt_pass: ""
+schema:
+  license_key: str
+  uid: str
+  authkey: str
+  av_identity: str
+  av_token: str
+  stream_user: str
+  stream_pass: password
+  web_user: str?
+  web_pass: password?
+  mqtt_host: str?
+  mqtt_port: port?
+  mqtt_user: str?
+  mqtt_pass: password?
